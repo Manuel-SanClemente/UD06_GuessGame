@@ -1,17 +1,19 @@
 package com.example.uf1_ud06_3_guessgamev2
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class GameViewModel: ViewModel() {
 
     val words = listOf("Android", "Fragment", "Kotlin", "Model")
     var secretWord  = words.random().uppercase()
-    var secretWordDisplay = ""
+    var secretWordDisplay = MutableLiveData<String>()
+    var lives = MutableLiveData<Int>(8)
     var guesses = mutableListOf<Char>()
-    var lives = 8
+    val clearInput = MutableLiveData<Unit>()
 
     init {
-        secretWordDisplay = generateSecretWordDisplay()
+        secretWordDisplay.value = generateSecretWordDisplay()
     }
 
     fun generateSecretWordDisplay() =
@@ -25,18 +27,20 @@ class GameViewModel: ViewModel() {
             val letter = guess.uppercase()[0]
             guesses.add(letter)
 
-            secretWordDisplay = generateSecretWordDisplay()
-            if(!secretWord.contains(letter)) lives -= 1
+            secretWordDisplay.value = generateSecretWordDisplay()
+            if(!secretWord.contains(letter))
+                lives.value = lives.value?.minus(1)
+            clearInput.value= Unit
         }
     }
 
-    fun win() = secretWord == secretWordDisplay
-    fun lost() = lives <= 0
+    fun win() = secretWord == secretWordDisplay.value
+    fun lost() = (lives.value ?: 0) <= 0
     fun restart() {
         guesses.clear()
-        lives = 8
+        lives.value = 8
         secretWord = words.random().uppercase()
-        secretWordDisplay = generateSecretWordDisplay()
+        secretWordDisplay.value = generateSecretWordDisplay()
     }
 
     fun resultMessage() =

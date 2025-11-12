@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.lifecycle.livedata.core.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
